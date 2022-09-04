@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "aio_multi_hardcore",
+	"version": "${version}",
+
+	"name": "Multiplayer hardcore",
+	"description": "Mod that allows for hardcore in multiplayer",
+	"authors": [
+		"Anton Lindroth (@ntoonio)"
+	],
+	"contact": {
+		"homepage": "https://mc.antoon.io/",
+		"sources": "https://github.com/ntoonio/mc-multi-hardcore"
+	},
+
+	"license": "GPL-3",
+	"icon": "assets/aio_multi_hardcore/icon.png",
+
+	"entrypoints": {
+		"main": [
+			"io.antoon.mc.multi_hardcore.MultiHardcore"
+		]
+	},
+	"mixins": [
+		"aio_multi_hardcore.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.9",
+		"minecraft": "~1.19",
+		"java": ">=17"
+	}
+}

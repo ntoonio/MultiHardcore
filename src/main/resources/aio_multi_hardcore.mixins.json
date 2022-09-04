@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "io.antoon.mc.multi_hardcore.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"server": [
+		"ServerPlayerEntityMixin",
+		"PlayerManagerMixin"
+	],
+	"injectors": {
+	"defaultRequire": 1
+	}
+}
