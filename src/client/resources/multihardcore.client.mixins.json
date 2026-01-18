@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "io.antoon.mc.multihardcore.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ExampleClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

@@ -1,32 +1,38 @@
 {
 	"schemaVersion": 1,
-	"id": "aio_multi_hardcore",
+	"id": "multihardcore",
 	"version": "${version}",
-
-	"name": "Multiplayer hardcore",
-	"description": "Mod that allows for hardcore in multiplayer",
+	"name": "MultiHardcore",
+	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Anton Lindroth (@ntoonio)"
+		"Me!"
 	],
 	"contact": {
-		"homepage": "https://mc.antoon.io/",
-		"sources": "https://github.com/ntoonio/mc-multi-hardcore"
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-
-	"license": "GPL-3",
-	"icon": "assets/aio_multi_hardcore/icon.png",
-
+	"license": "CC0-1.0",
+	"icon": "assets/multihardcore/icon.png",
+	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"io.antoon.mc.multi_hardcore.MultiHardcore"
+			"io.antoon.mc.multihardcore.MultiHardcore"
+		],
+		"client": [
+			"io.antoon.mc.multihardcore.MultiHardcoreClient"
 		]
 	},
 	"mixins": [
-		"aio_multi_hardcore.mixins.json"
+		"multihardcore.mixins.json",
+		{
+			"config": "multihardcore.client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
-		"fabricloader": ">=0.14.9",
-		"minecraft": "~1.19",
-		"java": ">=17"
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
 	}
 }

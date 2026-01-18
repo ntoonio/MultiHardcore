@@ -1,21 +1,9 @@
-# gradle
+.DS_Store
 
+.ccls-cache/
+.vscode/
 .gradle/
+
 build/
-out/
-classes/
-
-# idea
-
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# macos
-
-*.DS_Store
-
-# fabric
-
+bin/
 run/
