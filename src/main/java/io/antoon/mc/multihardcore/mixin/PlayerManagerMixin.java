@@ -14,16 +14,14 @@ import net.minecraft.text.Text;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
-
 	@Inject(method="checkCanJoin", at=@At("HEAD"), cancellable = true)
 	public void checkCanJoin(SocketAddress address, PlayerConfigEntry configEntry, CallbackInfoReturnable<Text> info) {
-		if (MultiHardcore.deadPlayers.contains(configEntry.id().toString())) {
-			info.setReturnValue(Text.of("You have died :("));
+		String uuid = configEntry.id().toString();
+
+		if (MultiHardcore.deadManager.hasUuidDied(uuid)) {
+			info.setReturnValue(Text.empty()
+					.append(Text.literal("You have died :(").formatted())
+					.append("You will not be able to play until the next season"));
 		}
 	}
-
-	/*@Inject(method="onPlayerConnect", at=@At("TAIL"), cancellable = true)
-	public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo info) {
-		//player.getStatHandler().getStat(Stat<T>.getOrCreateStatCriterion(name))
-	}*/
 }

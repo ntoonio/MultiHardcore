@@ -1,37 +1,33 @@
 package io.antoon.mc.multihardcore;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
-import net.minecraft.stat.Stat;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.WorldSavePath;
-import net.minecraft.world.World;
-import net.minecraft.world.rule.GameRule;
-import net.minecraft.world.rule.GameRules;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
+import net.minecraft.text.Text;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MultiHardcore implements ModInitializer {
 	public static final String MOD_ID = "multihardcore";
-	public static ArrayList<String> deadPlayers = new ArrayList<String>();
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static DeadPlayersManager deadManager;
+
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hello Fabric world!");
+		// When server starts
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+			deadManager = new DeadPlayersManager(server); // this feels like too late to initialize
+		});
 
+
+		// Test if this is first time player connect
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			var player = handler.player;
 			ServerStatHandler statHandler = player.getStatHandler();
@@ -39,43 +35,22 @@ public class MultiHardcore implements ModInitializer {
 
 			if (leaveGame > 0) return;
 
+			// First time this player joined
+
+			/*
 			player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 30 * 60 * 20, 255, true, true));
 			player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 30 * 60 * 20, 255, true, true));
+			*/
 		});
 
-		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-			setGamerules(server);
-
-			iterateAllPlayerStats(server);
-		});
-	}
-
-	private static void iterateAllPlayerStats(MinecraftServer server) {
-		Path statsDir = server.getSavePath(WorldSavePath.STATS);
-		if (!statsDir.toFile().exists()) return;
-
-		File[] statsFiles = statsDir.toFile().listFiles();
-		for (File statsFile : statsFiles) {
-			// Parse the statistic file
-			ServerStatHandler serverStatHandler = new ServerStatHandler(server, statsFile.toPath());
-
-			// Fetch the number of deaths
-			int playerDeaths = serverStatHandler.getStat(Stats.CUSTOM.getOrCreateStat(Stats.DEATHS));
-
-			if (playerDeaths > 0) {
-				String uuid = statsFile.getName().replace(".json", "");
-				deadPlayers.add(uuid);
+		// Immediately disconnect player that dies
+		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+			if (entity.isPlayer()) {
+				ServerPlayerEntity player = (ServerPlayerEntity) entity;
+				player.networkHandler.disconnect(Text.empty()
+					.append(Text.literal("You died :(").formatted())
+					.append("You will not be able to play until the next season"));
 			}
-		}
-	}
-
-	private static void setGamerules(MinecraftServer server) {
-		for (ServerWorld world : server.getWorlds()) {
-			GameRules rules = world.getGameRules();
-
-
-			System.out.println("HÄRKOMMERDET:");
-			System.out.println(rules.getValue(GameRules.RESPAWN_RADIUS));
-		}
+		});
 	}
 }
